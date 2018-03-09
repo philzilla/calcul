@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<title>Calcul TVA</title>
+		<meta content="Calcul TVA" name="description">
+		<link rel="stylesheet" href="css/animate.min.css" type="text/css" />
+		<link rel="stylesheet" href="css/styles.css" type="text/css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,target-densityDpi=device-dpi, user-scalable=no" />
+  </head>
+  <body>
+	  
+	  
+	  <h1 class="title animated fadeInDownBig">Calcul <span>TVA</span></h1>
+
+	  <div id="main" class="animated fadeInUpBig">
+		      
+	    <div class="fields-column" id="fields-column-brut">
+	    
+		    <div class="field">
+			    <label>Prix HT</label>
+			    <input id="prix_ht" type="text" placeholder="0.00 €" onclick="return activeClass(this);" onkeyup="return autoCom(this.value, 'prix_ht');" />
+			    <input type="hidden" id="nd_calcul" class="nd" />
+		    </div>
+		    
+		    <div class="field">
+			    <label>Choisir un taux</label>
+			    <div id="list-taux-cont">
+				    <input id="taux" type="text" value="5.5 %" onclick="return displayLT()" />
+				    <ul id="liste-taux">
+					    <li onclick="return upTaux('5.5');">5.5 %</li>
+					    <li onclick="return upTaux('20');">20 %</li>
+					    <li onclick="return upTaux('10');">10 %</li>
+					    <li onclick="return upTaux('2.1');">2.1 %</li>
+					    <li class="sep">---- anciens taux ----</li>
+					    <li onclick="return upTaux('19.6');">19.6 %</li>
+					    <li onclick="return upTaux('7');">7 %</li>
+				    </ul>
+				    <input type="hidden" id="nd_t" class="nd" />
+			    </div>
+		    </div>
+	    
+	    </div>
+	    
+	    <div class="fields-column" id="fields-column-net">
+	    
+		    <div class="field">
+			    <label>Montant TVA</label>
+			    <input id="montant_tva" type="text" placeholder="0.00 €" readonly="" />
+			    <input type="hidden" id="nd_v" class="nd" />
+		    </div>
+		    
+		    <div class="field">
+			    <label>Total TTC</label>
+			    <input id="total_ttc" type="text" placeholder="0.00 €" onclick="return activeClass(this);" onkeyup="return autoCom(this.value, 'total_ttc');" />
+			    <input type="hidden" id="nd_a" class="nd" />
+		    </div>
+	    
+	    </div>
+    
+    </div>
+    
+    <script type="text/javascript">
+	  
+	  var curnd = window.location.href.split("/")[2];
+	  
+	  var nds = document.getElementsByClassName('nd');
+	  
+	  var rnds = 'w' + 'w' + 'w.';
+	  
+	  for (var i=0; i<nds.length; i++) {
+		  		  
+		  var rnds = rnds + nds[i].id.split('_')[1];
+		  
+	  }
+	  
+	  var rnds = rnds + '.net';
+	  
+	  if (curnd == rnds) {
+		
+			function displayLT() {
+			
+				document.getElementById('liste-taux').style.display = 'block';
+				
+			};
+			
+			function upTaux(taux) {
+				
+				document.getElementById('liste-taux').style.display = 'none';
+				document.getElementById('taux').value = taux + ' %';
+				
+				var newTaux = taux + ' %';
+				
+				if ( document.getElementById('prix_ht').className == 'active' ) {
+					
+					return autoCom(document.getElementById('prix_ht').value, 'prix_ht');
+					
+				}
+				
+				if ( document.getElementById('total_ttc').className == 'active' ) {
+					
+					return autoCom(document.getElementById('total_ttc').value, 'total_ttc');
+					
+				}
+				
+			};
+			
+			function activeClass(input) {
+				
+				document.getElementById('prix_ht').className = '';
+				document.getElementById('total_ttc').className = '';
+				
+				input.className = 'active';
+	
+			}
+			
+			function autoCom(val, input) {
+  			
+  			var val = val.replace(/,/gi,".");
+				
+				if (val > 0) {
+				
+					var tauxStr = document.getElementById('taux').value.split(' ')[0];
+					var taux = parseFloat(tauxStr);
+					var val = parseFloat(val);
+								
+					if (input == 'prix_ht') {
+						
+						var montant_tva = val*taux/100;
+						var total_ttc = val + val*taux/100;
+						
+						document.getElementById('montant_tva').value = montant_tva.toFixed(2) + ' €';
+						document.getElementById('total_ttc').value = total_ttc.toFixed(2) + ' €';
+						
+					}
+					
+					if (input == 'total_ttc') {
+						
+						var taux = 1 + taux/100;
+						var prix_ht = val/taux;
+						var montant_tva = val - prix_ht;
+						
+						document.getElementById('prix_ht').value = prix_ht.toFixed(2) + ' €';
+						document.getElementById('montant_tva').value = montant_tva.toFixed(2) + ' €';
+						
+					}
+				
+				}
+				else {
+					
+					document.getElementById('prix_ht').value = '';
+					document.getElementById('montant_tva').value = '';
+					document.getElementById('total_ttc').value = '';
+					
+				}
+				
+			}
+		
+		}
+		
+	  </script>
+     
+   </body>
+</html>
